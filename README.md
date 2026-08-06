@@ -17,6 +17,16 @@
 | **效率** | ADR（每回合均伤）、爆头率（按武器）、穿墙/穿烟击杀 |
 | **数据导出** | 每枪 / 每次命中 / 每击杀 三张 CSV，可二次分析 |
 
+## 报告示例
+
+```powershell
+# 先跑分析，再出图（读 output/ 下 CSV 生成综合报告）
+python scripts\analyze_full.py <demo路径>
+python scripts\plot_report.py <demo名> docs\report_example.png
+```
+
+![CS2 对局分析报告示例](docs/report_example.png)
+
 ## 快速开始
 
 ```powershell
