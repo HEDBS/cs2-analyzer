@@ -85,6 +85,10 @@ CS2Analyzer/
 - 穿墙/穿烟/爆头：`player_death` 事件直接给 `penetrated` / `thrusmoke` / `headshot` 字段
 - 详细字段清单见 `docs/cs2-fields-and-pitfalls.md`
 
+## 开发复盘
+
+完整的壁垒与解决记录（方向决策、数据层坑、定位角度 6 轮侦查、可靠性结论）：[docs/development-recap.md](docs/development-recap.md)
+
 ## 已知限制（实测结论）
 
 1. **逐发"准星-目标偏差角"不可用**：`bullet_damage.shoot_ang` 为欧拉角，与 tick 表位置坐标系不匹配（实测中位 52° 噪声，符号/旋转扫描均无法修正）。定位质量改用事件级代理：命中率分桶、命中部位、距离分布。
