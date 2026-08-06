@@ -51,15 +51,85 @@ python scripts\analyze_kills.py <demo路径>
 [击杀] 爆头率 45% | 穿墙 6 | 穿烟 11 | AK 爆头率 60%
 ```
 
-## 录 demo 方法
+## 完整使用流程（分步）
 
-游戏内控制台（~）：
-```
-record 名字    # 开始录制（练枪图 / 比赛都行）
-stop          # 停止
+### 第 1 步：环境准备
+
+```powershell
+# 需要 Python 3.10+（python --version 检查）
+cd CS2Analyzer
+pip install -r requirements.txt
 ```
 
-demo 默认生成在 `Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\`，复制到 `demos\` 文件夹即可（demo 不入库，git 已忽略）。
+### 第 2 步：录制 demo
+
+进游戏，控制台（`~` 键）输入：
+
+```
+record 训练1        # 开始录制（练枪图 / 比赛 / 死斗都行）
+stop               # 打完后停止
+```
+
+demo 文件自动生成在：`Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\`
+（Steam 库可能不在 C 盘，用 Steam 客户端"设置→存储"查看库位置）
+
+### 第 3 步：放置 demo
+
+把 `.dem` 文件复制到项目 `demos\` 文件夹（也可以放任意路径，后面指定就行）：
+
+```powershell
+Copy-Item "E:\SteamLibrary\...\csgo\训练1.dem" E:\CS2Analyzer\demos\
+```
+
+### 第 4 步：运行分析
+
+```powershell
+# 参数1: demo 文件路径（必填）  参数2: 输出目录（可选，默认 output\）
+python scripts\analyze_full.py demos\训练1.dem
+```
+
+终端会打印完整汇总（命中率/急停/拉枪/部位/距离/ADR/爆头率），同时生成三张 CSV。
+
+### 第 5 步：查看结果
+
+`output\` 目录下三个文件（文件名 = demo 名 + 后缀）：
+
+| 文件 | 内容 | 每行含义 |
+|---|---|---|
+| `xxx_shots.csv` | 每枪记录 | 开枪时刻、玩家、武器、开枪速度、拉枪角度 |
+| `xxx_hits.csv` | 每次命中 | 攻击者、受害者、武器、命中部位、伤害、距离 |
+| `xxx_kills.csv` | 每击杀 | 击杀者、武器、爆头/穿墙/穿烟标记、击杀瞬间速度 |
+
+用 Excel / VS Code / pandas 都能打开（UTF-8 编码）。
+
+### 第 6 步：生成报告图（可选）
+
+```powershell
+python scripts\plot_report.py 训练1        # demo 名（不含路径和 .dem）
+# 或指定输出位置:
+python scripts\plot_report.py 训练1 docs\my_report.png
+```
+
+### 其他命令
+
+```powershell
+# 只看击杀+急停的快速版
+python scripts\analyze_kills.py demos\训练1.dem
+
+# 探测任意 demo 能读出什么（验证数据源）
+python scripts\probe_demo.py demos\训练1.dem
+```
+
+## 常见问题（FAQ）
+
+| 问题 | 解决 |
+|---|---|
+| `ModuleNotFoundError: demoparser2` | 没装依赖：`pip install -r requirements.txt` |
+| 找不到 demo 文件 | 在 Steam 客户端查库路径（设置→存储），demo 在 `game\csgo\` 下 |
+| 终端中文乱码 | PowerShell 先执行 `chcp 65001`，或用 VS Code 终端 |
+| 路径含空格报错 | 路径加引号：`python scripts\analyze_full.py "demos\my file.dem"` |
+| 5E 平台 demo 提示"回退 player_hurt" | 正常现象，5E demo 缺子弹级事件，已自动降级处理 |
+| 分析很慢（>1 分钟） | 正常，demo 越大越慢；337MB 约 6 秒，超长比赛可能 30 秒+ |
 
 ## 目录结构
 
