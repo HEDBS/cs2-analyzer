@@ -1,0 +1,13 @@
+# 数据文件（demo 很大，不入库）
+demos/
+*.dem
+
+# 分析输出
+output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
